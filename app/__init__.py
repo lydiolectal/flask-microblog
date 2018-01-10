@@ -1,10 +1,10 @@
-# import flask package as a Flask object
+# import Flask from flask folder
 from flask import Flask
 
-# create instance of Flask object called 'app'
-app = Flask(__name__)
+# create Flask object called 'app'
+flaskApp = Flask(__name__)
 
-# imports route class from routes.py, which is contained in the package folder
-# 'app' -- note that this 'app' is different from the 'app' above, which is a
-# Flask object.
+# imports contents of routes module from app folder
+# Q? why do we need to specify that it's in the app folder if we are in the app
+# folder? doesn't work without the words 'from app'
 from app import routes
