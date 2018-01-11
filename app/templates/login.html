@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Sign In</h1>
+    <!-- html container for the web form.
+    action: the URL that the form information should be submitted to. if blank,
+    info is submitted to current URL.
+    method: the type of HTTP request method to be used when submitting. 'post'
+    submits the data in the body of the request. 'get' also common. -->
+    <form action = "" method = "post">
+    <!-- 'form' here refers to FlaskForm object instantiated in view function
+    'login' in routes.py.-->
+    <!-- IMPORTANT: this line protects form from CSRF attacks -->
+    {{ form.hidden_tag() }}
+        <p>
+            <!-- label of the field -->
+            {{ form.username.label }} <br>
+            <!-- empty field itself. 'size' = width of field -->
+            {{ form.username(size = 32) }}
+        </p>
+        <p>
+            {{ form.password.label }} <br>
+            {{ form.password(size = 32) }}
+        </p>
+        <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
+        <p>{{ form.submit() }}</p>
+    </form>
+{% endblock %}
