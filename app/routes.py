@@ -4,7 +4,7 @@
 # that it's in.
 from app import flaskApp
 # imports render_template function
-from flask import render_template
+from flask import render_template, flash, redirect, url_for
 # imports LoginForm class from forms.py (inside directory 'app')
 from app.forms import LoginForm
 
@@ -14,8 +14,6 @@ from app.forms import LoginForm
 # below me."
 @flaskApp.route('/')
 @flaskApp.route('/index')
-# a terribly childish test
-@flaskApp.route('/poop')
 def index():
     user = {"username" : "Lydia"}
     posts = [
@@ -28,7 +26,19 @@ def index():
     ]
     return render_template("index.html", title = "Home", user = user, posts = posts)
 
-@flaskApp.route('/login')
+# indicates that this view function accepts get and post requests
+# (get is default). GET: request page display. POST: send form data to server.
+@flaskApp.route('/login', methods = ["GET", "POST"])
 def login():
     form = LoginForm()
+    # when user sends POST request (by hitting 'submit'), validate_on_submit
+    # gathers all the form data, runs validators, and returns True is everything
+    # is right.
+    if form.validate_on_submit():
+        # flash returns a message that is meant to be displayed
+        flash("Login requested for user {}, remember_me = {}".format(
+        form.username.data, form.remember_me.data))
+        # if login successful, redirect to index (this activates index() f'n.)
+        return redirect(url_for("index"))
+    # otherwise, show the form.
     return render_template("login.html", title = "Sign In", form = form)
