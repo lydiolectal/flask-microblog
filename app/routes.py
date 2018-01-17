@@ -12,8 +12,8 @@ from app.forms import LoginForm
 # invocation of the URL '/'  or '/index') and the function index() that follows.
 # In general, decorators (ex: @decor(X)) say, "when X happens, call the function
 # below me."
-@flaskApp.route('/')
-@flaskApp.route('/index')
+@flaskApp.route("/")
+@flaskApp.route("/index")
 def index():
     user = {"username" : "Lydia"}
     posts = [
@@ -28,7 +28,7 @@ def index():
 
 # indicates that this view function accepts get and post requests
 # (get is default). GET: request page display. POST: send form data to server.
-@flaskApp.route('/login', methods = ["GET", "POST"])
+@flaskApp.route("/login", methods = ["GET", "POST"])
 def login():
     form = LoginForm()
     # when user sends POST request (by hitting 'submit'), validate_on_submit
