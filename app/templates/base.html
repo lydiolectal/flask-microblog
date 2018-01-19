@@ -10,7 +10,13 @@
         <div>
             Microblog:
             <a href= "{{ url_for('index') }}">Home</a>
+            <!-- if not logged in (is_anonymous), show 'login' option.
+            if logged in, show 'logout' option.-->
+            {% if current_user.is_anonymous %}
             <a href= "{{ url_for('login') }}">Login</a>
+            {% else %}
+            <a href= "{{ url_for('logout') }}">Logout</a>
+            {% endif %}
         </div>
         <hr>
         <!-- flash messages disappear after get_flashed_messages is called.

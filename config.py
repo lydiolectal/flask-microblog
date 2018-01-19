@@ -7,6 +7,7 @@ class Config:
     # 'or': generate a key from the operating environment 'os.environ'
     # (also called "SECRET_KEY"). If not available, use the hardcoded string.
     SECRET_KEY = os.environ.get("SECRET_KEY") or "you-will-never-guess"
+    # set the path for flaskApp's database.
     SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL") or \
         "sqlite:///" + os.path.join(basedir, "app.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False

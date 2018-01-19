@@ -1,8 +1,15 @@
 from datetime import datetime
 # import database object db from the app directory
 from app import db
+# import login object (login manager)
+from app import login
+# import hash generator and checker
+from werkzeug.security import generate_password_hash, check_password_hash
+# mixin is a class in flask-login that includes generic implementations for
+# login properties (is_authenticated, is_active, is_anonymous, get_id())
+from flask_login import UserMixin
 
-class User(db.Model):
+class User(UserMixin, db.Model):
     # primary_key tells db to auto-generate a unique integer for every user
     id = db.Column(db.Integer, primary_key = True)
     # each field is instance of the Column class (takes field type as argument,
@@ -21,6 +28,12 @@ class User(db.Model):
     def __repr__(self):
         return "<User {}>".format(self.username)
 
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     body = db.Column(db.String(140))
@@ -34,3 +47,10 @@ class Post(db.Model):
     # tells python how to print object of this class
     def __repr__(self):
         return "<Post {}>".format(self.body)
+
+# function that is called when Flask-Login mananger needs to load a new page,
+# and needs the user object that is logged in. login calls this with User id.
+@login.user_loader
+def load_user(id):
+    # cast as int bc Flask-Login calls with the id as string.
+    return User.query.get(int(id))
