@@ -2,13 +2,13 @@
 # note that we don't say 'from app.__init__ import flaskApp', bc __init__ auto-
 # matically puts everything inside it to the level of the 'package' (directory)
 # that it's in.
-from app import flaskApp
+from app import flaskApp, db
 # imports render_template function
 # 'request' used to obtain 'next' in case user is redirected to login after trying to
 # access another page.
 from flask import render_template, flash, redirect, url_for, request
 # imports LoginForm class from forms.py (inside directory 'app')
-from app.forms import LoginForm
+from app.forms import LoginForm, RegistrationForm
 # current_user is the user that's logged in (if applicable), login_u() logs a
 # user in. login_required directs user away to page specified in login_view if
 # user isn't logged in.
@@ -77,3 +77,22 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for("index"))
+
+# form class for registration form
+@flaskApp.route("/register", methods = ["GET", "POST"])
+def register():
+    # don't let them register if a user is already signed in.
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
+    form = RegistrationForm()
+    # if fields are filled out correctly (and pass our validators; recall that
+    # new user's email and username must not already be in database).
+    if form.validate_on_submit():
+        user = User(username = form.username.data, email = form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        # not in the tutorial, but :)
+        flash("Congratulations {}, you are now a registered user!".format(form.username.data))
+        return redirect(url_for("login"))
+    return render_template("register.html", title = "Register", form = form)
