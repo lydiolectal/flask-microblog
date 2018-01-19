@@ -15,6 +15,9 @@
             {% if current_user.is_anonymous %}
             <a href= "{{ url_for('login') }}">Login</a>
             {% else %}
+            <!-- first param in url_for is the view method. remaining param
+            contains the value(s) to be passed into the view method (username-->
+            <a href="{{ url_for('user', username = current_user.username) }}">Profile</a>
             <a href= "{{ url_for('logout') }}">Logout</a>
             {% endif %}
         </div>

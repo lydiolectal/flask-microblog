@@ -78,7 +78,7 @@ def logout():
     logout_user()
     return redirect(url_for("index"))
 
-# form class for registration form
+# form page for registration form
 @flaskApp.route("/register", methods = ["GET", "POST"])
 def register():
     # don't let them register if a user is already signed in.
@@ -96,3 +96,15 @@ def register():
         flash("Congratulations {}, you are now a registered user!".format(form.username.data))
         return redirect(url_for("login"))
     return render_template("register.html", title = "Register", form = form)
+
+# profile page that only shows if there is a user logged in.
+# the value of 'username' inside the decorator <> and the parameter is passed in
+# by jinja2 in user.html, which sets username to current_user.username
+@flaskApp.route("/user/<username>")
+@login_required
+def user(username):
+    # tries to look up user by username; 404 error if lookup fails.
+    user = User.query.filter_by(username = username).first_or_404()
+    posts = [{"author": user, "body": "Test post #1"},
+            {"author": user, "body": "Dull test post #2"}]
+    return render_template("user.html", user = user, posts = posts)
