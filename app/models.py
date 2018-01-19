@@ -8,6 +8,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 # mixin is a class in flask-login that includes generic implementations for
 # login properties (is_authenticated, is_active, is_anonymous, get_id())
 from flask_login import UserMixin
+# generate md5 hash for making user avatars
+from hashlib import md5
 
 class User(UserMixin, db.Model):
     # primary_key tells db to auto-generate a unique integer for every user
@@ -33,6 +35,11 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    # returns avatar for the user, based on a hash of their email.
+    def avatar(self, size):
+        digest = md5(self.email.lower().encode("utf-8")).hexdigest()
+        return "https://www.gravatar.com/avatar/{}?d=retro&s={}".format(digest, size)
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key = True)
