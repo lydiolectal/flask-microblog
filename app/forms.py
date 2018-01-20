@@ -1,7 +1,10 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, ValidationError, Email, EqualTo
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextAreaField
+from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length
 from app.models import User
+
+# TODO: confirm this w/ tutorial.
+from flask_login import current_user
 
 # inheriting FlaskForm class
 # class represents a form within our application.
@@ -22,7 +25,7 @@ class RegistrationForm(FlaskForm):
     email = StringField("Email", validators=[DataRequired(), Email()])
     password = PasswordField("Password", validators=[DataRequired()])
     # makes user type password 2x, then checks that they match.
-    password2 = PasswordField("Password", validators=[DataRequired(),
+    password2 = PasswordField("Re-type Password", validators=[DataRequired(),
         EqualTo("password")])
     remember_me = BooleanField("Remember Me")
     submit = SubmitField("Register")
@@ -39,3 +42,16 @@ class RegistrationForm(FlaskForm):
         email = User.query.filter_by(username = email.data).first()
         if email is not None:
             raise ValidationError("Please use a different email.")
+
+# class for profile editor form.
+class EditProfileForm(FlaskForm):
+    username = StringField("Username", validators=[DataRequired()])
+    about_me = TextAreaField("About Me", validators=[Length(min=0, max=140)])
+    submit = SubmitField("Submit")
+
+    # TODO: confirm this w/ tutorial.
+    def validate_username(self, username):
+        user = User.query.filter_by(username = username.data).first()
+        # if the user is in the db and is a different user than the current one
+        if not(user is None or username.data == current_user.username):
+            raise ValidationError("Please use a different username.")

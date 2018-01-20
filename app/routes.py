@@ -8,13 +8,22 @@ from app import flaskApp, db
 # access another page.
 from flask import render_template, flash, redirect, url_for, request
 # imports LoginForm class from forms.py (inside directory 'app')
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm
 # current_user is the user that's logged in (if applicable), login_u() logs a
 # user in. login_required directs user away to page specified in login_view if
 # user isn't logged in.
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User
 from werkzeug.urls import url_parse
+from datetime import datetime
+
+# before_request registers the associated function to execute right before a
+# view function does. we're using it to record the last time a user was 'seen'.
+@flaskApp.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.utcnow()
+        db.session.commit()
 
 # @ statements are decorators: create association btw the event (in this case,
 # invocation of the URL '/'  or '/index') and the function index() that follows.
@@ -108,3 +117,23 @@ def user(username):
     posts = [{"author": user, "body": "Test post #1"},
             {"author": user, "body": "Dull test post #2"}]
     return render_template("user.html", user = user, posts = posts)
+
+@flaskApp.route("/edit_profile", methods = ["GET", "POST"])
+@login_required
+def edit_profile():
+    form = EditProfileForm()
+    # if profile is edited without any errors, submit and save to db.
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.about_me = form.about_me.data
+        db.session.commit()
+        flash("Your changes have been saved.")
+        return redirect(url_for("edit_profile"))
+    # if the user has just navigated to this page ("GET" request), display it
+    # with the user's data in its current state (i.e., this "prefills" form).
+    elif request.method == "GET":
+        form.username.data = current_user.username
+        form.about_me.data = current_user.about_me
+    # if the user tried to submit ("POST"), but there were errors, display a
+    # blank profile editor page.
+    return render_template("edit_profile.html", title = "Edit Profile", form = form)

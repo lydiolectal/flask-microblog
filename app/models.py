@@ -25,6 +25,8 @@ class User(UserMixin, db.Model):
     # 'author' is the name of a field that will be added to an author's posts
     # that refers back to the user.
     posts = db.relationship("Post", backref = "author", lazy = "dynamic")
+    about_me = db.Column(db.String(140))
+    last_seen = db.Column(db.DateTime, default = datetime.utcnow)
 
     # tells python how to print object of this class
     def __repr__(self):
