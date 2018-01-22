@@ -3,8 +3,8 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField, TextA
 from wtforms.validators import DataRequired, ValidationError, Email, EqualTo, Length
 from app.models import User
 
-# TODO: confirm this w/ tutorial.
-from flask_login import current_user
+# pass in current_user; req'd for my solution to the username problem.
+# from flask_login import current_user
 
 # inheriting FlaskForm class
 # class represents a form within our application.
@@ -49,9 +49,23 @@ class EditProfileForm(FlaskForm):
     about_me = TextAreaField("About Me", validators=[Length(min=0, max=140)])
     submit = SubmitField("Submit")
 
-    # TODO: confirm this w/ tutorial.
+    # author's way: pass current_user's username in as instance variable.
+    def __init__(self, original_username, *args, **kwargs):
+        # instantiate parent classes
+        super().__init__(*args, **kwargs)
+        self.original_username = original_username
+
     def validate_username(self, username):
-        user = User.query.filter_by(username = username.data).first()
-        # if the user is in the db and is a different user than the current one
-        if not(user is None or username.data == current_user.username):
-            raise ValidationError("Please use a different username.")
+        if username.data != self.original_username:
+            user = User.query.filter_by(username = username.data).first()
+            if user is not None:
+                raise ValidationError("Please use a different username.")
+
+    # my way: import current_user into this file, then check their name against
+    # the name in the username field.
+    # def validate_username(self, username):
+    #     if username.data != current_user.username:
+    #         user = User.query.filter_by(username = username.data).first()
+    #         # if the user is in the db
+    #         if user is not None:
+    #             raise ValidationError("Please use a different username.")
