@@ -74,3 +74,29 @@ sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed
 2018-01-22 16:33:45,734 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
 2018-01-23 14:30:42,878 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
 2018-01-23 14:30:56,738 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
+2018-01-23 20:15:39,912 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
+2018-01-23 20:15:58,537 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
+2018-01-23 20:16:25,380 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
+2018-01-23 20:37:24,104 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
+2018-01-23 20:37:39,887 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
+2018-01-23 20:37:57,599 ERROR: Exception on /follow/Dad [GET] [in /Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py:1560]
+Traceback (most recent call last):
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py", line 1982, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py", line 1614, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py", line 1517, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/_compat.py", line 33, in reraise
+    raise value
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py", line 1612, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py", line 1598, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
+    return func(*args, **kwargs)
+  File "/Users/lydiding/Desktop/microblog/app/routes.py", line 153, in follow
+    flask("You are following {}!".format(username))
+NameError: name 'flask' is not defined
+2018-01-23 20:38:30,590 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
+2018-01-23 20:39:18,235 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
