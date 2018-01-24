@@ -8,12 +8,12 @@ from app import flaskApp, db
 # access another page.
 from flask import render_template, flash, redirect, url_for, request
 # imports LoginForm class from forms.py (inside directory 'app')
-from app.forms import LoginForm, RegistrationForm, EditProfileForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm
 # current_user is the user that's logged in (if applicable), login_u() logs a
 # user in. login_required directs user away to page specified in login_view if
 # user isn't logged in.
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import User
+from app.models import User, Post
 from werkzeug.urls import url_parse
 from datetime import datetime
 
@@ -29,22 +29,44 @@ def before_request():
 # invocation of the URL '/'  or '/index') and the function index() that follows.
 # In general, decorators (ex: @decor(X)) say, "when X happens, call the function
 # below me."
-@flaskApp.route("/")
-@flaskApp.route("/index")
+@flaskApp.route("/", methods = ["GET", "POST"])
+@flaskApp.route("/index", methods = ["GET", "POST"])
 # will redirect to whatever function is passed to login_view if the user is not
 # logged in and tries to access index.
 @login_required
 def index():
-    # user = {"username" : "Lydia"} <-- now we have 'real' users in database
-    posts = [
-    {"author": {"username": "Wood"},
-    "body": "This is it."},
-    {"author" : {"username" : "Fred"},
-    "body" : "The big one."},
-    {"author" : {"username" : "George"},
-    "body" : "The one we've all been waiting for."}
-    ]
-    return render_template("index.html", title = "Home Page", posts = posts)
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(body = form.post.data, author = current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash("Your post is now live!")
+        return redirect(url_for("index"))
+    # access page # from the query string argument via request.args.get() method.
+    # default to 1 if none found.
+    page = request.args.get("page", 1, type = int)
+    # get a SQL query object for all posts the user is interested in, paginate
+    # according to which page we're on and the # of posts per page, as specified
+    # by config.
+    posts = current_user.followed_posts().paginate(page,
+        flaskApp.config["POSTS_PER_PAGE"], False)
+    # set the URL for the 'next' and 'previous buttons'
+    next_url = url_for("index", page = posts.next_num) if posts.has_next else None
+    prev_url = url_for("index", page = posts.prev_num) if posts.has_prev else None
+    return render_template("index.html", title = "Home Page", form = form,
+        posts = posts.items, next_url = next_url, prev_url = prev_url)
+
+@flaskApp.route("/explore")
+@login_required
+def explore():
+    page = request.args.get("page", 1, type = int)
+    posts = Post.query.order_by(Post.timestamp.desc()).paginate(page,
+        flaskApp.config["POSTS_PER_PAGE"], False)
+    next_url = url_for("index", page = posts.next_num) if posts.has_next else None
+    prev_url = url_for("index", page = posts.prev_num) if posts.has_prev else None
+    # reuse the index template, since the basic layout is the same.
+    return render_template("index.html", title = "Explore", posts = posts.items,
+        next_url = next_url, prev_url = prev_url)
 
 # indicates that this view function accepts get and post requests
 # (get is default). GET: request page display. POST: send form data to server.
@@ -114,9 +136,13 @@ def register():
 def user(username):
     # tries to look up user by username; 404 error if lookup fails.
     user = User.query.filter_by(username = username).first_or_404()
-    posts = [{"author": user, "body": "Test post #1"},
-            {"author": user, "body": "Dull test post #2"}]
-    return render_template("user.html", user = user, posts = posts)
+    page = request.args.get("page", 1, type = int)
+    posts = user.posts.order_by(Post.timestamp.desc()).paginate(page,
+        flaskApp.config["POSTS_PER_PAGE"], False)
+    next_url = url_for("index", page = posts.next_num) if posts.has_next else None
+    prev_url = url_for("index", page = posts.prev_num) if posts.has_prev else None
+    return render_template("user.html", user = user, posts = posts.items,
+        next_url = next_url, prev_url = prev_url)
 
 @flaskApp.route("/edit_profile", methods = ["GET", "POST"])
 @login_required

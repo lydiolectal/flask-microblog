@@ -1,14 +1,4 @@
-2018-01-22 16:15:18,176 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:72]
-2018-01-22 16:15:29,343 ERROR: Exception on /edit_profile [POST] [in /Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py:1560]
-Traceback (most recent call last):
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1193, in _execute_context
-    context)
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/engine/default.py", line 507, in do_execute
-    cursor.execute(statement, parameters)
-sqlite3.IntegrityError: UNIQUE constraint failed: user.username
-
-The above exception was the direct cause of the following exception:
-
+2018-01-24 12:31:48,863 ERROR: Exception on /explore [GET] [in /Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py:1560]
 Traceback (most recent call last):
   File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py", line 1982, in wsgi_app
     response = self.full_dispatch_request()
@@ -24,62 +14,10 @@ Traceback (most recent call last):
     return self.view_functions[rule.endpoint](**req.view_args)
   File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
     return func(*args, **kwargs)
-  File "/Users/lydiding/Desktop/microblog/app/routes.py", line 129, in edit_profile
-    db.session.commit()
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/orm/scoping.py", line 153, in do
-    return getattr(self.registry(), name)(*args, **kwargs)
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/orm/session.py", line 943, in commit
-    self.transaction.commit()
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/orm/session.py", line 467, in commit
-    self._prepare_impl()
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/orm/session.py", line 447, in _prepare_impl
-    self.session.flush()
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/orm/session.py", line 2243, in flush
-    self._flush(objects)
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/orm/session.py", line 2369, in _flush
-    transaction.rollback(_capture_exception=True)
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/util/langhelpers.py", line 66, in __exit__
-    compat.reraise(exc_type, exc_value, exc_tb)
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/util/compat.py", line 187, in reraise
-    raise value
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/orm/session.py", line 2333, in _flush
-    flush_context.execute()
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/orm/unitofwork.py", line 391, in execute
-    rec.execute(self)
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/orm/unitofwork.py", line 556, in execute
-    uow
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/orm/persistence.py", line 177, in save_obj
-    mapper, table, update)
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/orm/persistence.py", line 768, in _emit_update_statements
-    execute(statement, multiparams)
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 948, in execute
-    return meth(self, multiparams, params)
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 269, in _execute_on_connection
-    return connection._execute_clauseelement(self, multiparams, params)
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1060, in _execute_clauseelement
-    compiled_sql, distilled_params
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1200, in _execute_context
-    context)
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1413, in _handle_dbapi_exception
-    exc_info
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/util/compat.py", line 203, in raise_from_cause
-    reraise(type(exception), exception, tb=exc_tb, cause=cause)
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/util/compat.py", line 186, in reraise
-    raise value.with_traceback(tb)
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1193, in _execute_context
-    context)
-  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/sqlalchemy/engine/default.py", line 507, in do_execute
-    cursor.execute(statement, parameters)
-sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) UNIQUE constraint failed: user.username [SQL: 'UPDATE user SET username=?, about_me=? WHERE user.id = ?'] [parameters: ('Dad', '', 1)] (Background on this error at: http://sqlalche.me/e/gkpj)
-2018-01-22 16:33:45,734 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
-2018-01-23 14:30:42,878 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
-2018-01-23 14:30:56,738 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
-2018-01-23 20:15:39,912 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
-2018-01-23 20:15:58,537 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
-2018-01-23 20:16:25,380 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
-2018-01-23 20:37:24,104 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
-2018-01-23 20:37:39,887 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
-2018-01-23 20:37:57,599 ERROR: Exception on /follow/Dad [GET] [in /Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py:1560]
+  File "/Users/lydiding/Desktop/microblog/app/routes.py", line 63, in explore
+    return render_template("index.html", title = "Explore", form = form,
+NameError: name 'form' is not defined
+2018-01-24 12:31:51,106 ERROR: Exception on /explore [GET] [in /Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py:1560]
 Traceback (most recent call last):
   File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py", line 1982, in wsgi_app
     response = self.full_dispatch_request()
@@ -95,8 +33,9 @@ Traceback (most recent call last):
     return self.view_functions[rule.endpoint](**req.view_args)
   File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
     return func(*args, **kwargs)
-  File "/Users/lydiding/Desktop/microblog/app/routes.py", line 153, in follow
-    flask("You are following {}!".format(username))
-NameError: name 'flask' is not defined
-2018-01-23 20:38:30,590 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
-2018-01-23 20:39:18,235 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
+  File "/Users/lydiding/Desktop/microblog/app/routes.py", line 63, in explore
+    return render_template("index.html", title = "Explore", form = form,
+NameError: name 'form' is not defined
+2018-01-24 12:32:19,205 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
+2018-01-24 14:25:20,316 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
+2018-01-24 14:32:12,587 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]

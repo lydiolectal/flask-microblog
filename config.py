@@ -19,3 +19,6 @@ class Config:
     MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     ADMINS = ["lydiding@gmail.com"]
+
+    # set number of posts allowed per page for pagination.
+    POSTS_PER_PAGE = 3
