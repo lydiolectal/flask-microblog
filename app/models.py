@@ -11,6 +11,11 @@ from flask_login import UserMixin
 # generate md5 hash for making user avatars
 from hashlib import md5
 
+# an association table that represents a 'follow' relationship between 2 users.
+followers = db.Table("followers",
+db.Column("follower_id", db.Integer, db.ForeignKey("user.id")),
+db.Column("followed_id", db.Integer, db.ForeignKey("user.id")))
+
 class User(UserMixin, db.Model):
     # primary_key tells db to auto-generate a unique integer for every user
     id = db.Column(db.Integer, primary_key = True)
@@ -20,13 +25,21 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(64), index = True, unique = True)
     email = db.Column(db.String(120), index = True, unique = True)
     password_hash = db.Column(db.String(128))
-    # not a true field; represents the relationship between user and posts.
+    # not a true field; represents the" relationship between user and posts.
     # 'Post' indicates the class that is the 'many' side of the relationship.
     # 'author' is the name of a field that will be added to an author's posts
     # that refers back to the user.
     posts = db.relationship("Post", backref = "author", lazy = "dynamic")
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default = datetime.utcnow)
+
+    # follow relationship from the side of the follower. 'followed' relationship
+    # links the user to the people that she follows; backref links user to the
+    # other users that follow her.
+    followed = db.relationship("User", secondary = followers,
+    primaryjoin = (followers.c.follower_id == id),
+    secondaryjoin = (followers.c.followed_id == id),
+    backref = db.backref("followers", lazy = "dynamic"), lazy = "dynamic")
 
     # tells python how to print object of this class
     def __repr__(self):
@@ -42,6 +55,30 @@ class User(UserMixin, db.Model):
     def avatar(self, size):
         digest = md5(self.email.lower().encode("utf-8")).hexdigest()
         return "https://www.gravatar.com/avatar/{}?d=retro&s={}".format(digest, size)
+
+    # follow, unfollow, and ascertain whether current user is following someone.
+    def follow(self, user):
+        if not self.is_following(user):
+            self.followed.append(user)
+
+    def unfollow(self, user):
+        if self.is_following(user):
+            self.followed.remove(user)
+
+    def is_following(self, user):
+        # among the follow relationships that have 'self' as the follower,
+        # return the number that have 'user' as the followee.
+        return self.followed.filter(followers.c.followed_id==user.id).count()>0
+
+    # return the posts written by people that this user is following.
+    def followed_posts(self):
+        # posts by people this user is following.
+        followed = Post.query.join(followers,(
+            followers.c.followed_id == Post.user_id)).filter(
+            followers.c.follower_id == self.id)
+        # combine with own posts, then return.
+        own = Post.query.filter(user_id == self.id)
+        return followed.union(own).order_by(Post.timestamp.desc())
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key = True)
