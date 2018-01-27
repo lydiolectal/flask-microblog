@@ -1,8 +1,7 @@
 from datetime import datetime
 # import database object db from the app directory
-from app import db
 # import login object (login manager)
-from app import login
+from app import db, login, flaskApp
 # import hash generator and checker
 from werkzeug.security import generate_password_hash, check_password_hash
 # mixin is a class in flask-login that includes generic implementations for
@@ -10,6 +9,9 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 # generate md5 hash for making user avatars
 from hashlib import md5
+# import time and json web tokens package.
+from time import time
+import jwt
 
 # an association table that represents a 'follow' relationship between 2 users.
 followers = db.Table("followers",
@@ -79,6 +81,27 @@ class User(UserMixin, db.Model):
         # combine with own posts, then return.
         own = Post.query.filter(Post.user_id == self.id)
         return followed.union(own).order_by(Post.timestamp.desc())
+
+    # generates a json web token as a string (decode changes byte to string).
+    # set default expiry time to 10 minutes.
+    def get_reset_password_token(self, expires_in = 600):
+        return jwt.encode({"reset_password": self.id, "exp": time()+expires_in},
+            flaskApp.config["SECRET_KEY"], algorithm = "HS256").decode("utf-8")
+
+    # static methods are invoked w/ the class name, not the instance. Ex:
+    # User.verify_reset_password_token, not some_user.verify_reset_password...
+    # this method returns the id of the user, given the json web token.
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            # get the value of "reset_password" from payload.
+            id = jwt.decode(token, flaskApp.config["SECRET_KEY"],
+                algorithm = "HS256")["reset_password"]
+        except:
+            # jwt.decode() will throw an exception if token cannot be validated.
+            # we return None in this case.
+            return
+        return User.query.get(id)
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key = True)

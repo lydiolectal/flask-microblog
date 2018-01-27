@@ -39,3 +39,50 @@ NameError: name 'form' is not defined
 2018-01-24 12:32:19,205 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
 2018-01-24 14:25:20,316 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
 2018-01-24 14:32:12,587 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:75]
+2018-01-26 16:02:04,243 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:78]
+2018-01-26 16:11:36,114 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:78]
+2018-01-26 21:57:40,275 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:78]
+2018-01-26 21:57:51,217 ERROR: Exception on /reset_password_request [GET] [in /Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py:1560]
+Traceback (most recent call last):
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py", line 1982, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py", line 1614, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py", line 1517, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/_compat.py", line 33, in reraise
+    raise value
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py", line 1612, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py", line 1598, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/lydiding/Desktop/microblog/app/routes.py", line 202, in reset_password_request
+    form = ResetPasswordRequestForm()
+NameError: name 'ResetPasswordRequestForm' is not defined
+2018-01-26 22:01:35,427 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:78]
+2018-01-26 22:02:12,082 ERROR: Exception on /reset_password_request [POST] [in /Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py:1560]
+Traceback (most recent call last):
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py", line 1982, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py", line 1614, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py", line 1517, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/_compat.py", line 33, in reraise
+    raise value
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py", line 1612, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/Users/lydiding/Desktop/microblog/venv/lib/python3.6/site-packages/flask/app.py", line 1598, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/Users/lydiding/Desktop/microblog/app/routes.py", line 208, in reset_password_request
+    send_password_reset_email(user)
+  File "/Users/lydiding/Desktop/microblog/app/email.py", line 14, in send_password_reset_email
+    token = user.get_reset_password_token()
+  File "/Users/lydiding/Desktop/microblog/app/models.py", line 89, in get_reset_password_token
+    app.config["SECRET_KEY"], algorithm = "HS256").decode("utf-8")
+NameError: name 'app' is not defined
+2018-01-26 22:03:05,641 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:78]
+2018-01-26 22:06:27,896 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:78]
+2018-01-26 22:26:16,961 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:78]
+2018-01-26 22:27:23,340 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:78]
+2018-01-26 22:28:19,786 INFO: Microblog startup [in /Users/lydiding/Desktop/microblog/app/__init__.py:78]

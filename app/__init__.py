@@ -10,6 +10,7 @@ from flask_login import LoginManager
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 import os
+from flask_mail import Mail
 
 # create Flask object called 'app'
 flaskApp = Flask(__name__)
@@ -25,6 +26,8 @@ login = LoginManager(flaskApp)
 # ting to the login page if user isn't logged in while trying to view a protect-
 # ed page.
 login.login_view = "login"
+# create a mail object that can send emails to users.
+mail = Mail(flaskApp)
 
 # imports contents of routes module from app folder
 # Q? why do we need to specify that it's in the app folder if we are in the app
