@@ -1,16 +1,20 @@
+import os
+# import logging package for logging errors
+import logging
+
 # import Flask from flask folder
 from flask import Flask
 from config import Config
+
 # import SQLAlchemy and database migration classes
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 # import flask login extension
 from flask_login import LoginManager
-# import logging package for logging errors
-import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
-import os
+# mail, bootstrap extensions
 from flask_mail import Mail
+from flask_bootstrap import Bootstrap
 
 # create Flask object called 'app'
 flaskApp = Flask(__name__)
@@ -28,6 +32,8 @@ login = LoginManager(flaskApp)
 login.login_view = "login"
 # create a mail object that can send emails to users.
 mail = Mail(flaskApp)
+# create a bootstrap object that renders html templates
+bootstrap = Bootstrap(flaskApp)
 
 # imports contents of routes module from app folder
 # Q? why do we need to specify that it's in the app folder if we are in the app
