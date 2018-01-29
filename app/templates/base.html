@@ -1,5 +1,12 @@
 {% extends 'bootstrap/base.html' %}
 
+<!-- add an import of moment.js to scripts. super() ensures that we preserve
+    the javascript imports from bootstrap's base template. -->
+{% block scripts %}
+    {{ super() }}
+    {{ moment.include_moment() }}
+{% endblock %}
+
 {% block title %}
     {% if title %}{{ title }} - Microblog
     {% else %}Welcome to Microblog

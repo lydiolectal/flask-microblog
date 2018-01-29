@@ -15,6 +15,8 @@ from logging.handlers import SMTPHandler, RotatingFileHandler
 # mail, bootstrap extensions
 from flask_mail import Mail
 from flask_bootstrap import Bootstrap
+# datetime conversion and formatting library
+from flask_moment import Moment
 
 # create Flask object called 'app'
 flaskApp = Flask(__name__)
@@ -34,6 +36,8 @@ login.login_view = "login"
 mail = Mail(flaskApp)
 # create a bootstrap object that renders html templates
 bootstrap = Bootstrap(flaskApp)
+# initialize moment object
+moment = Moment(flaskApp)
 
 # imports contents of routes module from app folder
 # Q? why do we need to specify that it's in the app folder if we are in the app

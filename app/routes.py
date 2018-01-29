@@ -141,8 +141,8 @@ def user(username):
     page = request.args.get("page", 1, type = int)
     posts = user.posts.order_by(Post.timestamp.desc()).paginate(page,
         flaskApp.config["POSTS_PER_PAGE"], False)
-    next_url = url_for("user", page = posts.next_num) if posts.has_next else None
-    prev_url = url_for("user", page = posts.prev_num) if posts.has_prev else None
+    next_url = url_for("user", page = posts.next_num, username = username) if posts.has_next else None
+    prev_url = url_for("user", page = posts.prev_num, username = username) if posts.has_prev else None
     return render_template("user.html", user = user, posts = posts.items,
         next_url = next_url, prev_url = prev_url)
 
