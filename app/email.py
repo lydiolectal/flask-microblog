@@ -3,6 +3,7 @@ from app import mail, flaskApp
 from flask import render_template
 # python module for running background threads.
 from threading import Thread
+from flask_babel import _
 
 # sends emails in a background thread started by send_email
 def send_async_email(flaskApp, msg):
@@ -21,7 +22,7 @@ def send_password_reset_email(user):
     # get the json web token
     token = user.get_reset_password_token()
     # send email with jwt included in the reset URL given in the email.
-    send_email("Microblog: Reset Your Password",
+    send_email(_("Microblog: Reset Your Password"),
         sender = flaskApp.config["ADMINS"][0],
         recipients = [user.email],
         text_body = render_template("email/reset_password.txt",

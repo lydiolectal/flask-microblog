@@ -22,3 +22,6 @@ class Config:
 
     # set number of posts allowed per page for pagination.
     POSTS_PER_PAGE = 3
+
+    # specifies which languages are supported for this app.
+    LANGUAGES = ["en", "es"]

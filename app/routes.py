@@ -6,7 +6,7 @@ from app import flaskApp, db
 # imports render_template function
 # 'request' used to obtain 'next' in case user is redirected to login after trying to
 # access another page.
-from flask import render_template, flash, redirect, url_for, request
+from flask import render_template, flash, redirect, url_for, request, g
 # imports LoginForm class from forms.py (inside directory 'app')
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm
 from app.forms import ResetPasswordForm, ResetPasswordRequestForm
@@ -18,6 +18,8 @@ from app.models import User, Post
 from app.email import send_password_reset_email
 from werkzeug.urls import url_parse
 from datetime import datetime
+# translation marker
+from flask_babel import _, get_locale
 
 # before_request registers the associated function to execute right before a
 # view function does. we're using it to record the last time a user was 'seen'.
@@ -26,6 +28,8 @@ def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
+    # attaches locale specified by babel to g object.
+    g.locale = str(get_locale())
 
 # @ statements are decorators: create association btw the event (in this case,
 # invocation of the URL '/'  or '/index') and the function index() that follows.
@@ -42,7 +46,7 @@ def index():
         post = Post(body = form.post.data, author = current_user)
         db.session.add(post)
         db.session.commit()
-        flash("Your post is now live!")
+        flash(_("Your post is now live!"))
         return redirect(url_for("index"))
     # access page # from the query string argument via request.args.get() method.
     # default to 1 if none found.
@@ -55,7 +59,7 @@ def index():
     # set the URL for the 'next' and 'previous buttons'
     next_url = url_for("index", page = posts.next_num) if posts.has_next else None
     prev_url = url_for("index", page = posts.prev_num) if posts.has_prev else None
-    return render_template("index.html", title = "Home Page", form = form,
+    return render_template("index.html", title = _("Home Page"), form = form,
         posts = posts.items, next_url = next_url, prev_url = prev_url)
 
 @flaskApp.route("/explore")
@@ -67,7 +71,7 @@ def explore():
     next_url = url_for("explore", page = posts.next_num) if posts.has_next else None
     prev_url = url_for("explore", page = posts.prev_num) if posts.has_prev else None
     # reuse the index template, since the basic layout is the same.
-    return render_template("index.html", title = "Explore", posts = posts.items,
+    return render_template("index.html", title = _("Explore"), posts = posts.items,
         next_url = next_url, prev_url = prev_url)
 
 # indicates that this view function accepts get and post requests
@@ -89,7 +93,7 @@ def login():
         user = User.query.filter_by(username = form.username.data).first()
         # if login unsuccessful (user not registered- none- or password wrong.)
         if user is None or not(user.check_password(form.password.data)):
-            flash("Invalid username or password")
+            flash(_("Invalid username or password"))
             return redirect(url_for("login"))
         # if login successful, redirect to index
         login_user(user, remember = form.remember_me.data)
@@ -103,7 +107,7 @@ def login():
             next_page = url_for("index")
         return redirect(next_page)
     # otherwise, show the form.
-    return render_template("login.html", title = "Sign In", form = form)
+    return render_template("login.html", title = _("Sign In"), form = form)
 
 # logs user out if logged in and redirects to index.
 @flaskApp.route("/logout")
@@ -126,9 +130,10 @@ def register():
         db.session.add(user)
         db.session.commit()
         # not in the tutorial, but :)
-        flash("Congratulations {}, you are now a registered user!".format(form.username.data))
+        # annoying babel string substitution syntax is based on Python 2.
+        flash(_("Congratulations %(username)s, you are now a registered user!", username = form.username.data))
         return redirect(url_for("login"))
-    return render_template("register.html", title = "Register", form = form)
+    return render_template("register.html", title = _("Register"), form = form)
 
 # profile page that only shows if there is a user logged in.
 # the value of 'username' inside the decorator <> and the parameter is passed in
@@ -155,7 +160,7 @@ def edit_profile():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
         db.session.commit()
-        flash("Your changes have been saved.")
+        flash(_("Your changes have been saved."))
         return redirect(url_for("edit_profile"))
     # if the user has just navigated to this page ("GET" request), display it
     # with the user's data in its current state (i.e., this "prefills" form).
@@ -164,21 +169,21 @@ def edit_profile():
         form.about_me.data = current_user.about_me
     # if the user tried to submit ("POST"), but there were errors, display a
     # blank profile editor page.
-    return render_template("edit_profile.html", title = "Edit Profile", form = form)
+    return render_template("edit_profile.html", title = _("Edit Profile"), form = form)
 
 @flaskApp.route("/follow/<username>")
 @login_required
 def follow(username):
     user = User.query.filter_by(username = username).first()
     if user is None:
-        flash("User {} not found.".format(username))
+        flash(_("User %(username)s not found.", username = username))
         return redirect(url_for("index"))
     if user == current_user:
-        flash("You cannot follow yourself.")
+        flash(_("You cannot follow yourself."))
         return redirect(url_for("user", username = username))
     current_user.follow(user)
     db.session.commit()
-    flash("You are following {}!".format(username))
+    flash(_("You are following %(username)s!", username = username))
     return redirect(url_for("user", username = username))
 
 @flaskApp.route("/unfollow/<username>")
@@ -186,14 +191,14 @@ def follow(username):
 def unfollow(username):
     user = User.query.filter_by(username = username).first()
     if user is None:
-        flash("User {} not found.".format(username))
+        flash(_("User %(username)s not found.", username = username))
         return redirect(url_for("index"))
     if user == current_user:
-        flash("You cannot unfollow yourself.")
+        flash(_("You cannot unfollow yourself."))
         return redirect(url_for("user", username = username))
     current_user.unfollow(user)
     db.session.commit()
-    flash("You are no longer following {}.".format(username))
+    flash(_("You are no longer following %(username)s.", username = username))
     return redirect(url_for("user", username = username))
 
 # request page for resetting password
@@ -209,10 +214,10 @@ def reset_password_request():
         # flash regardless of whether user is actually in the system;
         # this prevents clients from figuring out whether a given user is
         # registered or not.
-        flash("Please check your email for instructions to reset your password.")
+        flash(_("Please check your email for instructions to reset your password."))
         return redirect(url_for("login"))
     return render_template("reset_password_request.html",
-        title = "Request Password Reset", form = form)
+        title = _("Request Password Reset"), form = form)
 
 # password reset page
 @flaskApp.route("/reset_password/<token>", methods = ["GET", "POST"])
@@ -226,6 +231,6 @@ def reset_password(token):
     if form.validate_on_submit():
         user.set_password(form.password.data)
         db.session.commit()
-        flash("Password has been successfully reset.")
+        flash(_("Password has been successfully reset."))
         return redirect(url_for("login"))
     return render_template("reset_password.html", form = form)

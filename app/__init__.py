@@ -3,7 +3,7 @@ import os
 import logging
 
 # import Flask from flask folder
-from flask import Flask
+from flask import Flask, request
 from config import Config
 
 # import SQLAlchemy and database migration classes
@@ -17,6 +17,8 @@ from flask_mail import Mail
 from flask_bootstrap import Bootstrap
 # datetime conversion and formatting library
 from flask_moment import Moment
+# translation extension and lazy evaluator
+from flask_babel import Babel, lazy_gettext as _l
 
 # create Flask object called 'app'
 flaskApp = Flask(__name__)
@@ -32,17 +34,17 @@ login = LoginManager(flaskApp)
 # ting to the login page if user isn't logged in while trying to view a protect-
 # ed page.
 login.login_view = "login"
+# override the default "please log in to view" message so that it can be
+# translated if necessary.
+login.login_message = _l("Please log in to access this page.")
 # create a mail object that can send emails to users.
 mail = Mail(flaskApp)
 # create a bootstrap object that renders html templates
 bootstrap = Bootstrap(flaskApp)
 # initialize moment object
 moment = Moment(flaskApp)
-
-# imports contents of routes module from app folder
-# Q? why do we need to specify that it's in the app folder if we are in the app
-# folder? doesn't work without the words 'from app'
-from app import routes, models, errors
+# babel translator object
+babel = Babel(flaskApp)
 
 # if the app is *not* in debug mode
 if not flaskApp.debug:
@@ -86,3 +88,15 @@ if not flaskApp.debug:
     flaskApp.logger.setLevel(logging.INFO)
     # this is the default message whenever an 'info' level event happens.
     flaskApp.logger.info("Microblog startup")
+
+# get_locale() is invoked whenever a translation is needed for a request.
+@babel.localeselector
+def get_locale():
+    # compare weighted list of client's accepted languages with languages that
+    # this app supports.
+    return request.accept_languages.best_match(flaskApp.config["LANGUAGES"])
+
+# imports contents of routes module from app folder
+# Q? why do we need to specify that it's in the app folder if we are in the app
+# folder? doesn't work without the words 'from app'
+from app import routes, models, errors
