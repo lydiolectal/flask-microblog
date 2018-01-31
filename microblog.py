@@ -1,6 +1,6 @@
 # imports the Flask application instance 'flaskApp' from the package
 # (our directory) named 'app'
-from app import flaskApp, db
+from app import flaskApp, db, cli
 from app.models import User, Post
 
 @flaskApp.shell_context_processor
