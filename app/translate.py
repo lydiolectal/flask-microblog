@@ -8,12 +8,11 @@ def translate(text, source_language, dest_language):
     if "MS_TRANSLATOR_KEY" not in flaskApp.config or not flaskApp.config["MS_TRANSLATOR_KEY"]:
         return _("Error: the translation service is not configured.")
     # create auth dictionary to store header Ocp-Apim.. value.
-    auth = {"Ocp-Apim-Subscription-Key": app.config["MS_TRANSLATOR_KEY"]}
+    auth = {"Ocp-Apim-Subscription-Key": flaskApp.config["MS_TRANSLATOR_KEY"]}
     # sends a get request w/ query string args, returns a response object.
     # response object contains status code (200, 404) and JSON token w/ translation.
     # TODO: verify that this is correct endpoint URI.
-    r = requests.get('''https://api.microsofttranslator.com/V2/Http.svc
-        /Translate?text={}&from={}&to={}'''.format(text, source_language,
+    r = requests.get("https://api.microsofttranslator.com/V2/Ajax.svc/Translate?text={}&from={}&to={}".format(text, source_language,
         dest_language), headers = auth)
     # non-200 status code means error.
     if r.status_code != 200:
