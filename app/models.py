@@ -112,6 +112,8 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime, index = True, default = datetime.utcnow)
     # references a foreign key, whose value is the id of the User object
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    # stores language detected for the post.
+    language = db.Column(db.String(5))
 
     # tells python how to print object of this class
     def __repr__(self):

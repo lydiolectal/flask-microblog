@@ -25,3 +25,6 @@ class Config:
 
     # specifies which languages are supported for this app.
     LANGUAGES = ["en", "es"]
+    
+    # gets key for translation API.
+    MS_TRANSLATOR_KEY = os.environ.get["MS_TRANSLATOR_KEY"]

@@ -18,8 +18,10 @@ from app.models import User, Post
 from app.email import send_password_reset_email
 from werkzeug.urls import url_parse
 from datetime import datetime
-# translation marker
+# translation marker.
 from flask_babel import _, get_locale
+# detects language, used to detect language of a post.
+from guess_language import guess_language
 
 # before_request registers the associated function to execute right before a
 # view function does. we're using it to record the last time a user was 'seen'.
@@ -43,7 +45,12 @@ def before_request():
 def index():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(body = form.post.data, author = current_user)
+        language = guess_language(form.post.data)
+        # if language is unknown, or if the answer is overly complex, assume
+        # unspecified language ""
+        if language == "UNKNOWN" or len(language) > 5:
+            language = ""
+        post = Post(body = form.post.data, author = current_user, language = language)
         db.session.add(post)
         db.session.commit()
         flash(_("Your post is now live!"))

@@ -1,5 +1,5 @@
 from app import flaskApp
-import os
+import os, click
 
 # translation command group using Click
 # cli.group() decorator creates a root for several other sub-commands.
