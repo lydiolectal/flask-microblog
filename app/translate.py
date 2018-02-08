@@ -17,6 +17,7 @@ def translate(text, source_language, dest_language):
     # non-200 status code means error.
     if r.status_code != 200:
         return _("Error: the translation service failed.")
+
     # content attribute of response object is a byte object. decode into UTF-8.
     # json.loads decodes JSON into raw python string.
     return json.loads(r.content.decode("utf-8-sig"))

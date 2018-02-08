@@ -5,6 +5,24 @@
 {% block scripts %}
     {{ super() }}
     {{ moment.include_moment() }}
+
+    <script>
+    function translate(sourceElem, destElem, sourceLang, destLang){
+        // replace the 'translate' link with an 'in progress' spinner gif.
+        $(destElem).html('<img src="{{ url_for('static', filename='loading.gif') }}">');
+        // send a POST request to the /translate URL, which gets handled by
+        // translate() in routes.py.
+        $.post("/translate", {
+                text: $(sourceElem).text(),
+                source_language: sourceLang,
+                dest_language: destLang
+                }).done(function(response) {
+                $(destElem).text(response["text"])
+                }).fail(function() {
+                $(destElem).text("{{ _('Error: Could not contact server.') }}");
+                });
+    }
+    </script>
 {% endblock %}
 
 {% block title %}

@@ -6,7 +6,7 @@ from app import flaskApp, db
 # imports render_template function
 # 'request' used to obtain 'next' in case user is redirected to login after trying to
 # access another page.
-from flask import render_template, flash, redirect, url_for, request, g
+from flask import render_template, flash, redirect, url_for, request, g, jsonify
 # imports LoginForm class from forms.py (inside directory 'app')
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm
 from app.forms import ResetPasswordForm, ResetPasswordRequestForm
@@ -22,6 +22,8 @@ from datetime import datetime
 from flask_babel import _, get_locale
 # detects language, used to detect language of a post.
 from guess_language import guess_language
+# import translate function from translate.py
+from app.translate import translate
 
 # before_request registers the associated function to execute right before a
 # view function does. we're using it to record the last time a user was 'seen'.
@@ -241,3 +243,16 @@ def reset_password(token):
         flash(_("Password has been successfully reset."))
         return redirect(url_for("login"))
     return render_template("reset_password.html", form = form)
+
+@flaskApp.route("/translate", methods=["POST"])
+@login_required
+def translate_text():
+    # request.form is a dictionary that flask exposes with the data incl. in
+    # the request submission.
+    # We pass in these 3 values (text, sourcelang, destlang) to translate,
+    # which returns the translated string. We pass this string in as the value
+    # in a dictionary, which jsonify converts into JSON formatted payload for
+    # the client.
+    return jsonify({"text": translate(request.form["text"],
+                                    request.form["source_language"],
+                                    request.form["dest_language"])})
