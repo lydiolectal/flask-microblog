@@ -11,7 +11,6 @@ def translate(text, source_language, dest_language):
     auth = {"Ocp-Apim-Subscription-Key": flaskApp.config["MS_TRANSLATOR_KEY"]}
     # sends a get request w/ query string args, returns a response object.
     # response object contains status code (200, 404) and JSON token w/ translation.
-    # TODO: verify that this is correct endpoint URI.
     r = requests.get("https://api.microsofttranslator.com/V2/Ajax.svc/Translate?text={}&from={}&to={}".format(text, source_language,
         dest_language), headers = auth)
     # non-200 status code means error.
