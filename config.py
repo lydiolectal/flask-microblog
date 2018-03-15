@@ -24,7 +24,7 @@ class Config:
     POSTS_PER_PAGE = 3
 
     # specifies which languages are supported for this app.
-    LANGUAGES = ["en", "es"]
+    LANGUAGES = ["en", "es", "ja"]
 
     # gets key for translation API.
     MS_TRANSLATOR_KEY = os.environ.get("MS_TRANSLATOR_KEY")
